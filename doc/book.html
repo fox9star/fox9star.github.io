@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📚 Book Management API · 검색 데모</title>
+  <style>
+    :root { --bg:#f7f9fc; --text:#2c3e50; --muted:#6c7a89; --primary:#4a6cf7; --card:#fff; --code:#f0f2f5; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:'Noto Sans KR', Arial, sans-serif; }
+    header { background:var(--card); border-bottom:1px solid #eaecee; padding:20px; position:sticky; top:0; }
+    main { max-width:960px; margin:24px auto; padding:0 16px; }
+    .card { background:var(--card); border:1px solid #eaecee; border-radius:12px; padding:20px; margin-bottom:20px; }
+    h1 { margin:0; font-size:22px; }
+    h2 { margin-top:0; font-size:20px; }
+    .row { display:grid; grid-template-columns:1fr auto; gap:12px; }
+    input { padding:10px; border:1px solid #dfe4ea; border-radius:8px; width:100%; }
+    button { background:var(--primary); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    th, td { border-bottom:1px solid #eceff3; padding:10px; text-align:left; }
+    .note { color:var(--muted); font-size:14px; }
+    #results, #fieldResults { max-height:300px; overflow-y:auto; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 Book Management API · 검색</h1>
+    <p class="note"></p>
+    <!--GitHub Pages는 정적 문서를 제공하며, 검색은 외부 실행 중인 API 서버에 요청합니다.-->
+
+    
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>API 서버 주소 설정</h2>
+      <input id="baseUrl" placeholder="API Base URL (예: http://localhost:3000)" />
+      <button id="saveUrl">저장</button>
+    </section>
+
+    <section class="card">
+      <h2>빠른 검색</h2>
+      <input id="query" placeholder="키워드 (제목/저자/ISBN)" />
+      <button id="searchBtn">검색</button>
+      <div id="results"></div>
+    </section>
+
+    <section class="card">
+      <h2>필드별 검색</h2>
+      <input id="title" placeholder="제목" />
+      <input id="author" placeholder="저자" />
+      <input id="isbn" placeholder="ISBN" />
+      <button id="fieldSearchBtn">검색</button>
+      <div id="fieldResults"></div>
+    </section>
+  </main>
+
+  <script>
+    const baseUrlInput = document.getElementById('baseUrl');
+    const saveUrlBtn = document.getElementById('saveUrl');
+    const queryInput = document.getElementById('query');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsDiv = document.getElementById('results');
+    const titleInput = document.getElementById('title');
+    const authorInput = document.getElementById('author');
+    const isbnInput = document.getElementById('isbn');
+    const fieldSearchBtn = document.getElementById('fieldSearchBtn');
+    const fieldResultsDiv = document.getElementById('fieldResults');
+
+    baseUrlInput.value = localStorage.getItem('bookapi_baseurl') || '';
+    saveUrlBtn.onclick = () => {
+      localStorage.setItem('bookapi_baseurl', baseUrlInput.value.trim());
+      alert('API 주소가 저장되었습니다.');
+    };
+
+    async function fetchJSON(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('요청 실패: ' + res.status);
+      return res.json();
+    }
+
+    function renderTable(container, items) {
+      if (!items.length) {
+        container.innerHTML = '<p class="note">검색 결과가 없습니다.</p>';
+        return;
+      }
+      const rows = items.map(b => `
+        <tr><td>${b.title||''}</td><td>${b.author||''}</td><td>${b.isbn||''}</td><td>${b.year||''}</td></tr>

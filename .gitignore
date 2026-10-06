@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# Env
+.env
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local/archive material that is not part of the public GitHub Pages site
+inc.html
+index.php
+wp-content/
+package.json
+book.js
+2048 x 1152.txt
+RAG.url.jpg
+images/rag.jpg
+images/channels4_banner.jpg

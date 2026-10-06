@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ff6f91" />
+<title>내 안에 사는 고양이 | MBTI 성향 테스트</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --paper:#fffdf7;
+    --ink:#2d2a33;
+    --muted:#7c7482;
+    --pink:#ff6f91;
+    --yellow:#ffd166;
+    --mint:#7ee0c3;
+    --purple:#9b87f5;
+    --blue:#7cb8ff;
+    --shadow:0 16px 40px rgba(68,51,79,.14);
+    --radius:28px;
+  }
+  *{box-sizing:border-box}
+  html{margin:0;padding:0;background:var(--bg);overflow-x:hidden;overflow-y:scroll;min-height:100%;scroll-behavior:auto}
+  body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;min-height:100vh;height:auto;overflow-x:hidden;overflow-y:visible;touch-action:pan-y;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch}
+  body, .app, section{max-height:none!important}
+  .app{overflow:visible!important}
+  button,input{font:inherit}
+  button{cursor:pointer}
+  .app{width:min(100%,520px);margin:0 auto;min-height:100vh;padding:22px 18px 44px;position:relative}
+  .blob{position:fixed;border-radius:999px;filter:blur(2px);opacity:.35;z-index:0;pointer-events:none}
+  .blob.one{width:180px;height:180px;background:#ffd6e0;top:-55px;right:-60px}
+  .blob.two{width:150px;height:150px;background:#c7f3e8;bottom:5%;left:-70px}
+  .blob.three{width:110px;height:110px;background:#e0d8ff;top:44%;right:-55px}
+  section{position:relative;z-index:1}
+  .hidden{display:none!important}
+  .card{background:rgba(255,253,247,.96);border:2px solid rgba(45,42,51,.06);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .hero{padding:30px 24px 26px;text-align:center;overflow:hidden;position:relative}
+  .brand-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:#fff0f4;color:#c33b63;font-weight:800;font-size:13px;letter-spacing:.02em}
+  h1{font-size:34px;line-height:1.2;margin:18px 0 10px;letter-spacing:-.04em}
+  .subtitle{font-size:16px;line-height:1.65;color:var(--muted);margin:0 auto 20px;max-width:390px}
+  .cat-stage{height:220px;display:flex;align-items:center;justify-content:center;margin:4px 0 8px;position:relative}
+  .spark{position:absolute;font-size:24px;animation:float 3s ease-in-out infinite}
+  .spark.s1{left:14%;top:25%;animation-delay:.2s}.spark.s2{right:14%;top:19%;animation-delay:1s}.spark.s3{right:19%;bottom:24%;animation-delay:1.7s}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(8deg)}}
+  .input-wrap{margin-top:18px;text-align:left}
+  .label{display:block;font-size:14px;font-weight:800;margin:0 0 8px 4px}
+  input[type="text"]{width:100%;border:2px solid #ece5ed;background:white;border-radius:18px;padding:16px 17px;outline:none;transition:.2s}
+  input[type="text"]:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,111,145,.12)}
+  .primary,.secondary,.ghost{width:100%;border:none;border-radius:18px;padding:16px 18px;font-weight:900;transition:.18s;box-shadow:none}
+  .primary{background:linear-gradient(135deg,#ff6f91,#ff8fab);color:white;margin-top:14px;box-shadow:0 10px 22px rgba(255,111,145,.28)}
+  .primary:hover{transform:translateY(-1px)}
+  .primary:active{transform:translateY(1px)}
+  .secondary{background:#fff3c8;color:#6e5520;border:2px solid #ffe79b}
+  .ghost{background:#f4f0f5;color:#625b68}
+  .micro{font-size:12px;color:#9b93a0;margin:12px 0 0}
+  .history{margin-top:14px;padding:18px;text-align:left}
+  .history-title{font-size:14px;font-weight:900;margin-bottom:10px}
+  .history-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px dashed #e7dfe8}
+  .history-item:first-of-type{border-top:none}
+  .history-name{font-weight:800;font-size:14px}.history-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .history-btn{border:none;background:#f6eef8;border-radius:12px;padding:9px 10px;font-weight:800;color:#755b80}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+  .progress-text{font-size:13px;font-weight:900;color:#6d6572}
+  .progress-track{height:10px;background:#eee8ef;border-radius:999px;overflow:hidden;flex:1;margin-left:12px}
+  .progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--blue),var(--purple));border-radius:999px;transition:width .35s ease}
+  .question-card{padding:28px 22px 22px;animation:popIn .32s ease}
+  @keyframes popIn{0%{opacity:0;transform:translateY(12px) scale(.985)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  .q-kicker{display:inline-flex;padding:7px 10px;border-radius:999px;background:#eefaf6;color:#33856f;font-weight:900;font-size:12px}
+  .question{font-size:24px;line-height:1.45;letter-spacing:-.035em;margin:16px 0 22px}
+  .options{display:grid;gap:11px}
+  .option{width:100%;text-align:left;border:2px solid #ece5ed;background:white;border-radius:18px;padding:15px 15px;display:flex;align-items:flex-start;gap:12px;color:var(--ink);font-weight:750;line-height:1.45;transition:.18s}
+  .option:hover{border-color:#ffc1d1;background:#fff8fa;transform:translateY(-1px)}
+  .option-key{width:28px;height:28px;border-radius:9px;background:#f6eff6;display:grid;place-items:center;flex:0 0 auto;font-size:12px;font-weight:900;color:#74667b}
+  .back-row{display:flex;justify-content:center;margin-top:14px}.back-link{border:none;background:transparent;color:#8a818e;font-weight:800;padding:10px}
+
+  .loading-card{padding:44px 24px;text-align:center;margin-top:16vh}
+  .paw-loader{display:flex;justify-content:center;gap:12px;font-size:28px;margin:24px 0 18px}
+  .paw-loader span{animation:pawBounce 1s infinite ease-in-out}.paw-loader span:nth-child(2){animation-delay:.12s}.paw-loader span:nth-child(3){animation-delay:.24s}
+  @keyframes pawBounce{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-9px);opacity:1}}
+
+  .result-wrap{display:grid;gap:14px}
+  .result-hero{padding:24px 20px 22px;text-align:center;overflow:hidden;position:relative}
+  .result-label{font-size:13px;color:#8d8490;font-weight:900}
+  .result-title{font-size:29px;line-height:1.2;margin:8px 0 3px;letter-spacing:-.045em}
+  .result-meta{font-weight:900;color:#725f79;font-size:14px}
+  .quote{margin:15px auto 0;background:#fff5c9;border-radius:18px;padding:12px 14px;max-width:390px;line-height:1.5;font-weight:800;color:#65501d;font-size:14px}
+  .section-card{padding:20px}
+  .section-title{font-size:17px;margin:0 0 12px;font-weight:950;display:flex;gap:8px;align-items:center}
+  .desc{line-height:1.75;color:#5f5864;font-size:14px;margin:0}
+  .traits{display:grid;gap:12px}
+  .trait-head{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:900;margin-bottom:6px}
+  .trait-track{height:12px;background:#eee8ef;border-radius:999px;overflow:hidden}
+  .trait-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#ffd166,#ff8fab,#9b87f5)}
+  .detail-grid{display:grid;gap:10px}
+  .mini-card{border-radius:18px;padding:15px;background:#faf6fb;border:1px solid #eee6f0}
+  .mini-card h3{font-size:14px;margin:0 0 7px}.mini-card p{font-size:13px;line-height:1.65;color:#625a66;margin:0}
+  .compat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .compat{border-radius:20px;padding:15px;min-height:130px}
+  .compat.good{background:#eefbf6;border:1px solid #caefe2}.compat.bad{background:#fff0f3;border:1px solid #ffd3dd}
+  .compat .tag{font-size:12px;font-weight:950;margin-bottom:8px}.compat .name{font-size:15px;font-weight:950;line-height:1.35}.compat .reason{font-size:12px;color:#6b626e;line-height:1.5;margin-top:6px}
+  .actions{display:grid;gap:9px}
+  .footer-note{text-align:center;color:#968d9a;font-size:11px;line-height:1.55;margin-top:6px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#2f2932;color:white;padding:11px 15px;border-radius:999px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;z-index:50;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .small-link-btn{width:auto;padding:10px 13px;border:none;border-radius:14px;background:#f5eff6;color:#675d6b;font-weight:850}
+
+  @media (max-width:420px){
+    .app{padding:14px 12px 34px}.hero{padding:24px 18px}.question-card{padding:23px 17px 18px}.question{font-size:21px}.compat-grid{grid-template-columns:1fr}.cat-stage{height:200px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="blob one"></div><div class="blob two"></div><div class="blob three"></div>
+<div class="app">
+  <section id="startScreen">
+    <div class="card hero">
+      <div class="brand-pill">🐾 CAT PERSONALITY TEST</div>
+      <h1>내 안에 사는 고양이</h1>
+      <p class="subtitle">평범한 인간처럼 살고 있지만, 사실 당신의 마음속에는 고양이 한 마리가 살고 있습니다. 16개의 질문으로 그 정체를 찾아보세요.</p>
+      <div id="startCat" class="cat-stage"></div>
+      <div class="spark s1">✨</div><div class="spark s2">🐾</div><div class="spark s3">⭐</div>
+      <div class="input-wrap">
+        <label class="label" for="nickname">고양이가 당신을 뭐라고 부르면 될까요?</label>
+        <input id="nickname" type="text" maxlength="12" autocomplete="off" placeholder="닉네임을 입력해 주세요" />
+      </div>
+      <button class="primary" id="startBtn">내 고양이 찾으러 가기 →</button>
+      <p class="micro">16문항 · 약 2~3분 · 최근 결과는 이 브라우저에 저장돼요</p>
+    </div>
+    <div id="historyBox" class="card history hidden"></div>
+  </section>
+
+  <section id="testScreen" class="hidden">
+    <div class="topbar">
+      <span id="progressText" class="progress-text">1 / 16</span>
+      <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+    </div>
+    <div class="card question-card" id="questionCard">
+      <span class="q-kicker">마음속 냥이 관찰 중</span>
+      <h2 id="questionText" class="question"></h2>
+      <div id="options" class="options"></div>
+    </div>
+    <div class="back-row"><button id="backBtn" class="back-link">← 이전 질문</button></div>
+  </section>
+
+  <section id="loadingScreen" class="hidden">
+    <div class="card loading-card">
+      <div style="font-size:48px">🔎🐱</div>
+      <h2 style="margin:12px 0 6px">당신 마음속을 살펴보는 중...</h2>
+      <p class="subtitle" style="margin-bottom:0">냥냥거리는 신호와 숨겨진 발바닥 흔적을 분석하고 있어요.</p>
+      <div class="paw-loader"><span>🐾</span><span>🐾</span><span>🐾</span></div>
+    </div>
+  </section>
+
+  <section id="resultScreen" class="hidden">
+    <div class="result-wrap">
+      <div class="card result-hero">
+        <div id="resultLabel" class="result-label"></div>
+        <div id="resultCatArt" class="cat-stage" style="height:235px;margin-top:2px"></div>
+        <h2 id="resultTitle" class="result-title"></h2>
+        <div id="resultMeta" class="result-meta"></div>
+        <div id="resultQuote" class="quote"></div>
+      </div>
+
+      <div class="card section-card">
+        <h2 class="section-title">🐾 당신의 기본 성격</h2>
+        <p id="resultDescription" class="desc"></p>
+      </div>
+
+      <div class="card section-card">
+        <h2 class="section-title">📊 고양이 능력치</h2>
+        <div id="traitList" class="traits"></div>
+      </div>
+
+      <div class="card section-card">
+        <h2 class="section-title">🔍 조금 더 자세히 보면</h2>
+        <div id="detailGrid" class="detail-grid"></div>
+      </div>
+
+      <div class="card section-card">
+        <h2 class="section-title">💞 냥궁합</h2>
+        <div id="compatGrid" class="compat-grid"></div>
+      </div>
+
+      <div class="card section-card actions">
+        <button class="primary" id="saveCardBtn" style="margin-top:0">결과 카드 PNG 저장</button>
+        <button class="secondary" id="shareBtn">친구에게 공유하기 🐾</button>
+        <button class="ghost" id="restartBtn">다시 테스트하기</button>
+      </div>
+      <div class="footer-note">※ 재미와 자기이해를 위한 성향 테스트이며, 전문적인 심리 진단 도구가 아닙니다.</div>
+    </div>
+  </section>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const screens = ["startScreen","testScreen","loadingScreen","resultScreen"];
+
+  const traitLabels = {
+    homebody:["집콕력","🏠"], curiosity:["호기심","🔎"], affection:["애정표현","❤️"], coolness:["도도함","😼"], energy:["활동력","⚡"], imagination:["몽상력","🌙"]
+  };
+
+  const questions = [
+    { axis:"EI", toward:"E", text:"친구가 오늘 저녁 갑자기 만나자고 한다. 나는?", traits:{homebody:-2,energy:2,affection:1}, options:["완전 좋아! 어디서 만나?","괜찮아, 나가볼까?","오늘은 집이 좀 더 끌린다","갑작스러운 약속은 거의 거절한다"] },
+    { axis:"SN", toward:"N", text:"처음 가본 카페에 앉아 있을 때 더 자주 하는 생각은?", traits:{curiosity:1,imagination:2}, options:["메뉴와 좌석, 동선을 먼저 살핀다","지금 필요한 것부터 현실적으로 본다","여기서 재밌는 일이 생길 것 같다","창밖을 보며 상상의 세계로 빠진다"] },
+    { axis:"TF", toward:"F", text:"친구가 속상한 일을 털어놓았다. 가장 먼저 드는 반응은?", traits:{affection:2,coolness:-1}, options:["무슨 해결책이 가능한지부터 생각한다","원인과 상황을 정리해 본다","마음이 어땠을지 먼저 공감한다","당장 꼭 안아주고 싶은 마음이 든다"] },
+    { axis:"JP", toward:"J", text:"주말 여행 전날의 내 모습과 가장 가까운 것은?", traits:{energy:1,curiosity:-1}, options:["시간표와 준비물을 거의 다 정리해 둔다","큰 흐름 정도는 미리 정해 둔다","그날 기분에 따라 움직여도 괜찮다","계획은 현장에서 만들면 된다"] },
+
+    { axis:"EI", toward:"I", text:"사람 많은 모임이 끝난 뒤, 나는 보통?", traits:{homebody:2,energy:-2,coolness:1}, options:["아직 에너지가 남아서 2차도 가능하다","재밌었지만 조금 쉬면 된다","혼자 조용히 있어야 충전된다","집에 도착하자마자 세상과 로그아웃한다"] },
+    { axis:"SN", toward:"S", text:"새 물건을 조립해야 한다면 나는?", traits:{curiosity:-1,imagination:-1}, options:["설명서를 처음부터 차근차근 본다","필요한 부분만 확인하며 따라 한다","대충 구조를 보고 감으로 시도한다","일단 상상한 방식으로 만들고 본다"] },
+    { axis:"TF", toward:"T", text:"팀에서 의견 충돌이 생겼다. 나는 무엇을 더 중요하게 볼까?", traits:{coolness:2,affection:-1}, options:["기준과 논리가 맞는 쪽","효율적으로 결론 나는 쪽","서로 납득할 수 있는 분위기","누구도 크게 상처받지 않는 방향"] },
+    { axis:"JP", toward:"P", text:"해야 할 일이 여러 개 쌓였을 때 나는?", traits:{curiosity:1,energy:1}, options:["우선순위를 정해서 순서대로 처리한다","대략 계획을 세우고 시작한다","당기는 일부터 먼저 손댄다","마감 직전 집중력이 갑자기 폭발한다"] },
+
+    { axis:"EI", toward:"E", text:"새로운 사람들과 처음 만나는 자리에서 나는?", traits:{energy:2,affection:1,coolness:-1}, options:["먼저 말 걸고 분위기를 띄우는 편","몇 명과는 금방 친해지는 편","상대가 다가오면 편하게 이야기한다","조용히 관찰하다가 익숙해지면 말한다"] },
+    { axis:"SN", toward:"N", text:"영화나 드라마를 보고 난 뒤 더 오래 남는 것은?", traits:{imagination:2,curiosity:1}, options:["구체적인 장면과 사실적인 디테일","현실적으로 말이 되는 설정인지 여부","숨겨진 의미나 상징에 대한 생각","만약 내가 그 세계에 있었다면 하는 상상"] },
+    { axis:"TF", toward:"F", text:"누군가 내 실수를 지적했을 때 더 민감한 부분은?", traits:{affection:1,coolness:-2}, options:["그 지적이 사실인지 아닌지","어떻게 고치면 될지","상대가 어떤 말투로 말했는지","나를 어떻게 생각하고 있을지"] },
+    { axis:"JP", toward:"J", text:"중요한 약속이 있는 날, 나는?", traits:{homebody:-1,energy:1}, options:["시간 여유를 충분히 두고 움직인다","대체로 제시간에 맞춰 간다","살짝 촉박하게 움직이는 편","도착 직전까지 다른 걸 하다가 뛴다"] },
+
+    { axis:"EI", toward:"I", text:"아무 일정도 없는 하루가 생긴다면 가장 좋은 것은?", traits:{homebody:2,imagination:1,energy:-1}, options:["밖에 나가 사람을 만나며 채운다","가볍게 외출하고 집에서 마무리한다","집에서 내가 좋아하는 걸 하며 쉰다","침대·간식·혼자만의 세계면 완벽하다"] },
+    { axis:"SN", toward:"S", text:"누군가 새로운 아이디어를 설명할 때 나는?", traits:{curiosity:-1,imagination:-2}, options:["구체적인 사례부터 듣고 싶다","실제로 가능한지 먼저 궁금하다","가능성 자체가 흥미롭다","아이디어를 듣자마자 또 다른 상상이 이어진다"] },
+    { axis:"TF", toward:"T", text:"친구가 잘못된 선택을 하려는 것 같을 때 나는?", traits:{coolness:1,affection:-1}, options:["틀렸다고 생각하는 이유를 분명히 말한다","현실적인 장단점을 정리해 준다","친구가 왜 그러는지 먼저 들어본다","내가 걱정된다는 마음부터 전한다"] },
+    { axis:"JP", toward:"P", text:"예상치 못한 일정 변경이 생기면 나는?", traits:{curiosity:2,energy:1,coolness:1}, options:["가능하면 원래 계획대로 맞추고 싶다","조금 불편하지만 금방 조정한다","새로운 흐름도 나쁘지 않다고 생각한다","오히려 예상 밖이라 더 재밌다"] }
+  ];
+
+  const cats = {
+    INTJ:{breed:"러시안 블루",name:"계획하는 전략냥",color:"#8fa8b8",accent:"#cad8e1",accessory:"glasses",quote:"말없이 보고 있지만 머릿속에는 이미 세 단계 뒤까지 계산되어 있다.",description:"조용하고 독립적이지만, 관심 있는 일에는 놀라울 만큼 깊게 파고드는 고양이예요. 혼자 생각할 시간을 소중히 여기고, 감정보다 구조와 방향을 먼저 보는 편입니다.",alone:"혼자 있는 시간이 가장 생산적입니다. 방해받지 않을수록 생각이 또렷해져요.",love:"표현은 크지 않아도 믿는 사람에게는 오래, 꾸준히 마음을 줍니다.",angry:"바로 폭발하기보다 조용히 거리를 두고 상황을 분석합니다.",happy:"복잡한 문제를 해결했을 때, 내 방식대로 시간을 쓸 때 만족도가 올라가요.",good:"ENFP",bad:"ESFP"},
+    INTP:{breed:"아메리칸 숏헤어",name:"호기심 천재냥",color:"#b5b1a8",accent:"#dedad1",accessory:"spark",quote:"왜 그런지 궁금해서 건드렸을 뿐인데 또 뭔가가 열렸다.",description:"궁금한 건 직접 확인해야 직성이 풀리는 탐구형 고양이예요. 낯선 주제도 구조를 파악하는 순간 재미를 느끼고, 혼자만의 사고 실험을 즐깁니다.",alone:"생각거리 하나만 있어도 하루가 금방 지나갑니다.",love:"관심 있는 사람에게는 엉뚱한 질문과 정보 공유로 애정을 표현합니다.",angry:"감정 싸움보다 논리적으로 정리하려 하지만, 답답하면 대화를 종료해 버릴 수 있어요.",happy:"새로운 개념을 이해하거나 예상 밖의 연결고리를 발견할 때 신납니다.",good:"ENFJ",bad:"ESFJ"},
+    ENTJ:{breed:"메인쿤",name:"카리스마 대장냥",color:"#6f584a",accent:"#d8bfa7",accessory:"crown",quote:"이 집의 집사는 나다. 일정표도 내가 짠다.",description:"목표가 보이면 먼저 움직이고 주변까지 끌고 가는 리더형 고양이예요. 판단이 빠르고 추진력이 강해, 애매한 상황을 오래 두는 걸 답답해합니다.",alone:"쉬는 중에도 다음 목표를 정리하는 편입니다.",love:"좋아하는 사람에게 현실적인 도움과 든든한 보호로 마음을 보여줘요.",angry:"문제의 핵심부터 짚고 빠르게 해결하려 합니다. 돌려 말하는 건 잘 못해요.",happy:"성과가 보이고 일이 앞으로 굴러갈 때 가장 기분이 좋습니다.",good:"INFP",bad:"ISFP"},
+    ENTP:{breed:"벵갈",name:"사고뭉치 발명냥",color:"#c58a4a",accent:"#f2c480",accessory:"bolt",quote:"하지 말라고? 그럼 왜 안 되는지 먼저 확인해 볼게.",description:"새로운 자극과 아이디어를 쫓아다니는 발명가형 고양이예요. 규칙보다 가능성을 보고, 재미있는 논쟁과 즉흥적인 도전을 즐깁니다.",alone:"혼자 있어도 새로운 장난감을 만들거나 딴생각으로 바쁩니다.",love:"장난, 토론, 깜짝 제안처럼 움직이는 방식으로 마음을 표현해요.",angry:"논쟁 모드가 켜지면 끝까지 근거를 찾으려 합니다.",happy:"새로운 아이디어가 먹히거나 남들이 안 해본 걸 시도할 때 짜릿합니다.",good:"INFJ",bad:"ISFJ"},
+    INFJ:{breed:"네벨룽",name:"달빛 상담냥",color:"#7a849b",accent:"#cbd0df",accessory:"moon",quote:"말하지 않아도 대충 알 것 같아. 그래도 천천히 얘기해 줘.",description:"겉은 차분하지만 사람의 분위기와 감정을 섬세하게 읽는 고양이예요. 혼자 생각을 정리하는 시간이 꼭 필요하고, 의미 있는 관계를 깊게 이어갑니다.",alone:"조용한 음악과 생각 정리만 있어도 마음이 편안해집니다.",love:"작은 변화까지 기억하고 필요한 순간에 조용히 곁을 지켜줘요.",angry:"참다가 선을 넘으면 갑자기 아주 단호해질 수 있습니다.",happy:"누군가에게 진짜 도움이 됐다고 느낄 때 큰 보람을 느껴요.",good:"ENTP",bad:"ESTP"},
+    INFP:{breed:"랙돌",name:"몽상하는 구름냥",color:"#f2e2d2",accent:"#b7c7e8",accessory:"cloud",quote:"세상은 넓고 생각할 건 많고 침대는 너무 포근하다.",description:"조용히 세상을 관찰하면서 자신만의 상상 속을 여행하는 고양이예요. 마음에 맞는 사람에게는 깊은 애정을 주고, 의미와 감정을 중요하게 여깁니다.",alone:"혼자 있는 시간이 오히려 마음을 충전해 줍니다. 상상과 취향의 세계가 넓어요.",love:"처음에는 조심스럽지만 마음을 열면 아주 깊고 다정하게 애정을 표현합니다.",angry:"바로 싸우기보다 마음속으로 오래 생각하다가 조용히 거리를 둘 수 있어요.",happy:"내 취향을 마음껏 즐기고, 진심이 통하는 대화를 할 때 행복합니다.",good:"ENTJ",bad:"ESTJ"},
+    ENFJ:{breed:"버만",name:"마음지킴 리더냥",color:"#ead9c7",accent:"#9fa9d9",accessory:"heart",quote:"다들 괜찮아? 좋아, 그럼 이제 진짜 시작하자.",description:"사람들의 분위기를 읽고 자연스럽게 연결하는 따뜻한 리더형 고양이예요. 다른 사람의 가능성을 잘 보고, 함께 좋아지는 방향을 만들려고 합니다.",alone:"혼자 쉬는 시간도 필요하지만, 결국 누군가와 좋은 감정을 나누고 싶어집니다.",love:"표현이 적극적이고 세심합니다. 상대가 좋아하는 걸 기억해 두는 편이에요.",angry:"관계가 깨지는 건 싫지만, 중요한 가치를 건드리면 분명하게 말합니다.",happy:"사람들이 서로 잘 어울리고 성장하는 모습을 볼 때 기쁩니다.",good:"INTP",bad:"ISTP"},
+    ENFP:{breed:"아비시니안",name:"텐션폭발 탐험냥",color:"#c99a6b",accent:"#f2d2a9",accessory:"backpack",quote:"저기 뭐야? 가보자! 아니 잠깐, 저쪽도 재밌어 보여!",description:"새로운 사람, 장소, 아이디어를 보면 눈이 반짝이는 탐험형 고양이예요. 감정이 풍부하고 가능성을 빠르게 발견하며, 재미있는 일에는 순식간에 몰입합니다.",alone:"혼자 있어도 상상과 새로운 계획으로 머릿속이 시끌벅적합니다.",love:"좋아하면 티가 나는 편입니다. 관심과 리액션이 크고 따뜻해요.",angry:"감정이 먼저 올라오지만 오래 끌기보다는 다시 좋은 쪽으로 풀고 싶어 합니다.",happy:"새로운 경험, 좋은 사람, 재미있는 아이디어가 한꺼번에 있을 때 최고입니다.",good:"INTJ",bad:"ISTJ"},
+    ISTJ:{breed:"브리티시 숏헤어",name:"FM 원칙냥",color:"#9ea3a8",accent:"#d7d9dc",accessory:"tie",quote:"간식은 정해진 시간에. 규칙은 괜히 있는 게 아니다.",description:"차분하고 책임감이 강한 원칙형 고양이예요. 익숙한 방식과 검증된 기준을 신뢰하고, 맡은 일은 끝까지 정확하게 처리하려 합니다.",alone:"혼자서 루틴대로 움직일 때 마음이 가장 안정적입니다.",love:"화려한 표현보다 꾸준함과 책임감으로 마음을 보여줘요.",angry:"반복되는 실수나 약속 위반에는 꽤 단호해집니다.",happy:"계획대로 일이 끝나고 주변이 정돈되어 있을 때 편안합니다.",good:"ESFP",bad:"ENFP"},
+    ISFJ:{breed:"스코티시 폴드",name:"조용한 챙김냥",color:"#d8c7b7",accent:"#f0dfd0",accessory:"scarf",quote:"말은 안 했지만 네가 좋아하는 간식은 이미 챙겨뒀어.",description:"조용히 주변을 살피고 필요한 걸 먼저 챙기는 다정한 고양이예요. 익숙한 관계를 소중히 여기고, 작은 약속과 기억을 오래 간직합니다.",alone:"편안하고 익숙한 공간에서 쉬는 시간이 큰 충전이 됩니다.",love:"세심한 배려와 행동으로 애정을 보여줘요. 말보다 챙김이 먼저입니다.",angry:"오래 참다가 마음이 다치면 조용히 거리를 둘 수 있어요.",happy:"소중한 사람들이 편안해하고 내 배려가 도움이 됐을 때 뿌듯합니다.",good:"ENTP",bad:"ESTP"},
+    ESTJ:{breed:"노르웨이 숲",name:"완벽주의 반장냥",color:"#8c745f",accent:"#d6c0a5",accessory:"clipboard",quote:"좋아, 역할 나눌게. 너는 간식, 너는 모래, 나는 전체 관리.",description:"현실적인 판단과 실행력이 강한 관리형 고양이예요. 해야 할 일이 보이면 순서를 정하고 사람과 자원을 빠르게 움직입니다.",alone:"할 일을 정리하거나 다음 일정 준비를 하며 마음을 안정시킵니다.",love:"문제가 생기면 바로 해결해 주고, 필요한 걸 챙기는 방식으로 표현합니다.",angry:"비효율과 무책임을 보면 바로 지적하는 편입니다.",happy:"팀이 잘 돌아가고 결과가 분명하게 나올 때 만족도가 높아요.",good:"ISFP",bad:"INFP"},
+    ESFJ:{breed:"페르시안",name:"인기만점 사랑냥",color:"#efe2d0",accent:"#f5c7d8",accessory:"bow",quote:"다 같이 먹자! 네 것도 준비했어. 사진도 찍자!",description:"사람들과 정을 나누고 분위기를 따뜻하게 만드는 사교형 고양이예요. 누가 무엇을 좋아하는지 잘 기억하고, 관계의 온도를 섬세하게 관리합니다.",alone:"혼자 쉬다가도 재미있는 소식이 생기면 누군가와 나누고 싶어져요.",love:"표현이 풍부하고 적극적입니다. 챙김과 연락이 곧 애정이에요.",angry:"관계가 어색해지는 걸 힘들어하고, 서운함이 쌓이면 크게 느낄 수 있습니다.",happy:"사람들이 즐거워하고 분위기가 화목할 때 가장 신납니다.",good:"ISTP",bad:"INTP"},
+    ISTP:{breed:"샴",name:"혼자 잘 노는 냥",color:"#d8c7b5",accent:"#66564f",accessory:"wrench",quote:"설명은 됐고, 일단 내가 한번 해볼게.",description:"말보다 행동이 빠르고 상황 판단이 정확한 실전형 고양이예요. 혼자 집중해서 해결하는 걸 좋아하고, 불필요하게 감정을 크게 드러내지 않습니다.",alone:"도구나 취미 하나만 있으면 오래 집중해서 잘 놉니다.",love:"말은 짧아도 필요한 순간에 나타나 도와주는 타입입니다.",angry:"간섭이 심해지면 갑자기 아주 차갑게 선을 그을 수 있어요.",happy:"손으로 직접 해결하거나 자유롭게 움직일 때 가장 편합니다.",good:"ESFJ",bad:"ENFJ"},
+    ISFP:{breed:"터키시 앙고라",name:"자유로운 감성냥",color:"#f5f2ea",accent:"#d6c8ed",accessory:"flower",quote:"예쁜 건 그냥 좋은 거야. 이유는 나중에 생각할래.",description:"자기 취향과 감각을 소중히 여기는 자유로운 고양이예요. 조용하지만 따뜻하고, 억지로 틀에 맞추기보다 자연스럽게 흘러가는 걸 좋아합니다.",alone:"좋아하는 음악, 그림, 음식처럼 감각적인 즐거움으로 충전합니다.",love:"말보다 분위기와 행동으로 마음을 보여줘요. 편안함을 중요하게 여깁니다.",angry:"억압받는 느낌이 들면 말없이 멀어질 수 있습니다.",happy:"내 취향대로 자유롭게 움직이고 아름다운 것을 즐길 때 만족해요.",good:"ESTJ",bad:"ENTJ"},
+    ESTP:{breed:"벵갈",name:"행동대장 모험냥",color:"#d09a54",accent:"#f0c278",accessory:"goggles",quote:"생각은 가면서 하면 되지. 일단 점프!",description:"현장에서 빠르게 판단하고 몸으로 부딪히는 액션형 고양이예요. 변화와 경쟁, 새로운 자극을 즐기며 위기에서도 순발력이 좋습니다.",alone:"가만히 있기보다 뭔가 직접 하거나 새로운 자극을 찾습니다.",love:"같이 놀고, 같이 움직이고, 바로 표현하는 편이에요.",angry:"순간적으로 확 올라올 수 있지만 뒤끝은 비교적 짧습니다.",happy:"즉각적인 반응이 오고 재미가 눈앞에 있을 때 에너지가 폭발합니다.",good:"ISFJ",bad:"INFJ"},
+    ESFP:{breed:"오렌지 태비",name:"파티의 중심냥",color:"#e7a04b",accent:"#ffd28e",accessory:"party",quote:"일단 재밌으면 됐지! 사진은 내가 제일 앞에서 찍을게.",description:"사람과 순간의 즐거움을 크게 느끼는 분위기 메이커형 고양이예요. 표현이 솔직하고 리액션이 풍부하며, 주변을 금방 밝게 만듭니다.",alone:"오래 혼자 있으면 심심함을 느끼기 쉬워요. 재미있는 자극을 찾습니다.",love:"좋아하면 바로 티가 납니다. 칭찬, 스킨십, 함께하는 시간이 중요해요.",angry:"감정이 얼굴에 잘 드러나지만 좋은 분위기가 되면 빠르게 풀리기도 합니다.",happy:"좋은 사람들과 지금 이 순간을 즐길 때 가장 행복합니다.",good:"ISTJ",bad:"INTJ"}
+  };
+
+  const state = { nickname:"", index:0, answers:[], result:null };
+  const optionScores = [2,1,-1,-2];
+
+  function showScreen(id){ screens.forEach(s=>$("#"+s).classList.toggle("hidden", s!==id)); window.scrollTo({top:0,behavior:"smooth"}); }
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),1800); }
+
+  function catSvg(cat, size=210){
+    const acc = cat.accessory || "";
+    const accessories = {
+      glasses:`<g stroke="#3c3540" stroke-width="6" fill="none"><circle cx="120" cy="124" r="24"/><circle cx="200" cy="124" r="24"/><path d="M144 124h32"/></g>`,
+      crown:`<path d="M112 62 L128 30 L160 58 L191 30 L207 62 Z" fill="#ffd166" stroke="#6e5520" stroke-width="5"/>`,
+      spark:`<g fill="#ffd166"><path d="M230 78 l7 17 17 7-17 7-7 17-7-17-17-7 17-7z"/></g>`,
+      bolt:`<path d="M226 69 l-18 34 h20 l-18 36 42-48 h-23 l16-22z" fill="#ffd166"/>`,
+      moon:`<path d="M232 63a28 28 0 1 0 19 48 23 23 0 1 1-19-48z" fill="#ffd166"/>`,
+      cloud:`<g fill="#fff"><circle cx="228" cy="85" r="18"/><circle cx="250" cy="80" r="24"/><circle cx="273" cy="88" r="17"/><rect x="224" y="87" width="55" height="20" rx="10"/></g>`,
+      heart:`<path d="M247 70c-14-18-41-4-32 17 6 14 32 30 32 30s26-16 32-30c9-21-18-35-32-17z" fill="#ff6f91"/>`,
+      backpack:`<rect x="212" y="175" width="48" height="58" rx="14" fill="#7ee0c3" stroke="#2f6b5d" stroke-width="5"/>`,
+      tie:`<path d="M160 181 l18 0 10 16-19 34-19-34z" fill="#7c89ff"/>`,
+      scarf:`<path d="M119 180c28 16 57 16 84 0l7 18c-37 20-66 20-99 0z" fill="#ff8fab"/>`,
+      clipboard:`<rect x="220" y="168" width="48" height="66" rx="7" fill="#fff4c2" stroke="#806c35" stroke-width="4"/><rect x="232" y="160" width="24" height="14" rx="4" fill="#806c35"/>`,
+      bow:`<g fill="#ff8fab"><ellipse cx="225" cy="70" rx="22" ry="14" transform="rotate(-18 225 70)"/><ellipse cx="267" cy="70" rx="22" ry="14" transform="rotate(18 267 70)"/><circle cx="246" cy="70" r="9"/></g>`,
+      wrench:`<path d="M225 72c10-7 20-8 29-2l-12 12 8 8 12-12c5 10 3 21-5 29-9 9-21 10-31 5l-36 36-12-12 36-36c-5-10-2-21 11-28z" fill="#7d8790"/>`,
+      flower:`<g transform="translate(247 80)"><g fill="#ff8fab"><circle cx="0" cy="-16" r="10"/><circle cx="15" cy="-5" r="10"/><circle cx="9" cy="13" r="10"/><circle cx="-9" cy="13" r="10"/><circle cx="-15" cy="-5" r="10"/></g><circle cx="0" cy="0" r="8" fill="#ffd166"/></g>`,
+      goggles:`<g stroke="#453a36" stroke-width="6" fill="#bfe3ff"><circle cx="125" cy="83" r="22"/><circle cx="194" cy="83" r="22"/><path d="M147 83h25"/></g>`,
+      party:`<path d="M228 110 L260 42 L286 113 Z" fill="#9b87f5" stroke="#5b4ca4" stroke-width="4"/><circle cx="260" cy="42" r="9" fill="#ffd166"/>`
+    };
+    return `<svg width="${size}" height="${size}" viewBox="0 0 320 300" role="img" aria-label="${cat.name}">
+      <ellipse cx="160" cy="265" rx="92" ry="18" fill="rgba(47,41,50,.08)"/>
+      <path d="M94 118 L74 55 L124 88" fill="${cat.color}" stroke="#403840" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M226 118 L246 55 L196 88" fill="${cat.color}" stroke="#403840" stroke-width="6" stroke-linejoin="round"/>
+      <ellipse cx="160" cy="143" rx="86" ry="75" fill="${cat.color}" stroke="#403840" stroke-width="6"/>
+      <ellipse cx="160" cy="224" rx="72" ry="55" fill="${cat.color}" stroke="#403840" stroke-width="6"/>
+      <ellipse cx="160" cy="230" rx="45" ry="34" fill="${cat.accent}" opacity=".72"/>
+      <ellipse cx="125" cy="133" rx="11" ry="15" fill="#2f2932"/><ellipse cx="195" cy="133" rx="11" ry="15" fill="#2f2932"/>
+      <circle cx="121" cy="128" r="3.5" fill="#fff"/><circle cx="191" cy="128" r="3.5" fill="#fff"/>
+      <path d="M153 154 Q160 161 167 154" fill="#ff9ab2" stroke="#403840" stroke-width="4" stroke-linecap="round"/>
+      <path d="M160 161 q-9 11-20 3 M160 161 q9 11 20 3" fill="none" stroke="#403840" stroke-width="4" stroke-linecap="round"/>
+      <path d="M100 157 h-42 M101 166 h-38 M220 157 h42 M219 166 h38" stroke="#5a4c57" stroke-width="3" stroke-linecap="round"/>
+      <path d="M92 228 q-32 8-28 39 q4 20 29 9" fill="none" stroke="#403840" stroke-width="8" stroke-linecap="round"/>
+      ${accessories[acc] || ""}
+    </svg>`;
+  }
+
+  function renderStartCat(){ const sample={name:"미스터리 냥",color:"#f2d2a9",accent:"#ffe6b6",accessory:"heart"}; $("#startCat").innerHTML=catSvg(sample,220); }
+
+  function renderQuestion(){
+    const q=questions[state.index];
+    $("#progressText").textContent=`${state.index+1} / ${questions.length}`;
+    $("#progressBar").style.width=`${((state.index+1)/questions.length)*100}%`;
+    $("#questionText").textContent=q.text;
+    $("#options").innerHTML=q.options.map((text,i)=>`<button class="option" data-i="${i}"><span class="option-key">${i+1}</span><span>${text}</span></button>`).join("");
+    $("#backBtn").style.visibility=state.index===0?"hidden":"visible";
+    $("#questionCard").style.animation="none"; void $("#questionCard").offsetWidth; $("#questionCard").style.animation="popIn .32s ease";
+    $("#options").querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>selectAnswer(Number(btn.dataset.i))));
+  }
+
+  function normalizedAnswerScore(q, optionIndex){
+    // 모든 문항은 1번 선택지가 E/S/T/J, 4번 선택지가 I/N/F/P 방향이다.
+    // 내부 점수는 I/N/F/P가 양수가 되도록 뒤집어 누적한다.
+    return -optionScores[optionIndex];
+  }
+
+  function selectAnswer(i){
+    state.answers[state.index]=i;
+    if(state.index<questions.length-1){ state.index++; renderQuestion(); }
+    else finishTest();
+  }
+
+  function finishTest(){
+    showScreen("loadingScreen");
+    setTimeout(()=>{ state.result=calculateResult(); saveHistory(state.result); renderResult(state.result); showScreen("resultScreen"); },900);
+  }
+
+  function calculateResult(){
+    const axis={EI:0,SN:0,TF:0,JP:0};
+    const traitRaw={homebody:0,curiosity:0,affection:0,coolness:0,energy:0,imagination:0};
+    const traitWeight={homebody:0,curiosity:0,affection:0,coolness:0,energy:0,imagination:0};
+    questions.forEach((q,idx)=>{
+      const oi=state.answers[idx];
+      const raw=optionScores[oi];
+      axis[q.axis]+=normalizedAnswerScore(q,oi);
+      const firstSide=q.axis[0];
+      const traitScale=(q.toward===firstSide)?raw:-raw;
+      Object.entries(q.traits||{}).forEach(([k,w])=>{ traitRaw[k]+=traitScale*w; traitWeight[k]+=Math.abs(2*w); });
+    });
+    const mbti=(axis.EI>=0?"I":"E")+(axis.SN>=0?"N":"S")+(axis.TF>=0?"F":"T")+(axis.JP>=0?"P":"J");
+    const traits={};
+    Object.keys(traitRaw).forEach(k=>{
+      const max=traitWeight[k]||1;
+      const pct=Math.round(50 + (traitRaw[k]/max)*50);
+      traits[k]=Math.max(5,Math.min(95,pct));
+    });
+    return {nickname:state.nickname,date:new Date().toISOString(),mbti,traits,axis,cat:cats[mbti]};
+  }
+
+  function renderResult(r){
+    const c=r.cat;
+    $("#resultLabel").textContent=`${r.nickname}님의 마음속에 사는 고양이는...`;
+    $("#resultCatArt").innerHTML=catSvg(c,235);
+    $("#resultTitle").textContent=c.name;
+    $("#resultMeta").textContent=`${c.breed} · ${r.mbti}`;
+    $("#resultQuote").textContent=`“${c.quote}”`;
+    $("#resultDescription").textContent=c.description;
+    $("#traitList").innerHTML=Object.entries(r.traits).map(([k,v])=>`<div><div class="trait-head"><span>${traitLabels[k][1]} ${traitLabels[k][0]}</span><span>${v}%</span></div><div class="trait-track"><div class="trait-fill" style="width:${v}%"></div></div></div>`).join("");
+    const details=[['🏠 혼자 있을 때',c.alone],['❤️ 좋아하는 사람 앞에서',c.love],['😾 화났을 때',c.angry],['🐟 나를 행복하게 하는 것',c.happy]];
+    $("#detailGrid").innerHTML=details.map(([t,p])=>`<div class="mini-card"><h3>${t}</h3><p>${p}</p></div>`).join("");
+    const good=cats[c.good], bad=cats[c.bad];
+    $("#compatGrid").innerHTML=`<div class="compat good"><div class="tag">❤️ 환상의 냥궁합</div><div class="name">${good.name}<br><small>${c.good} · ${good.breed}</small></div><div class="reason">서로 다른 강점이 자연스럽게 빈틈을 채워주는 조합.</div></div><div class="compat bad"><div class="tag">💥 환장의 냥궁합</div><div class="name">${bad.name}<br><small>${c.bad} · ${bad.breed}</small></div><div class="reason">방식이 너무 달라 티격태격할 수 있지만, 그래서 더 웃긴 조합.</div></div>`;
+  }
+
+  const memoryStore={};
+  function storageGet(k){ try{return localStorage.getItem(k)}catch(e){return Object.prototype.hasOwnProperty.call(memoryStore,k)?memoryStore[k]:null} }
+  function storageSet(k,v){ try{localStorage.setItem(k,String(v))}catch(e){memoryStore[k]=String(v)} }
+  function historyKey(){ return "innerCatHistoryV1"; }
+  function saveHistory(r){
+    let h=[]; try{h=JSON.parse(storageGet(historyKey()))||[]}catch(e){}
+    const compact={nickname:r.nickname,date:r.date,mbti:r.mbti,traits:r.traits};
+    h.unshift(compact); h=h.slice(0,5); storageSet(historyKey(),JSON.stringify(h)); renderHistory();
+  }
+  function renderHistory(){
+    let h=[]; try{h=JSON.parse(storageGet(historyKey()))||[]}catch(e){}
+    const box=$("#historyBox");
+    if(!h.length){box.classList.add("hidden");return}
+    box.classList.remove("hidden");
+    box.innerHTML=`<div class="history-title">🐾 최근에 발견한 고양이</div>`+h.map((x,i)=>{const c=cats[x.mbti]; const d=new Date(x.date).toLocaleDateString("ko-KR"); return `<div class="history-item"><div><div class="history-name">${x.nickname} · ${c.name}</div><div class="history-sub">${x.mbti} · ${c.breed} · ${d}</div></div><button class="history-btn" data-hi="${i}">보기</button></div>`}).join("");
+    box.querySelectorAll("[data-hi]").forEach(b=>b.addEventListener("click",()=>openHistory(Number(b.dataset.hi))));
+  }
+  function openHistory(i){
+    let h=JSON.parse(storageGet(historyKey())||"[]"); const x=h[i]; if(!x)return;
+    state.nickname=x.nickname; state.result={...x,cat:cats[x.mbti]};
+    $("#nickname").value=x.nickname; renderResult(state.result); showScreen("resultScreen");
+  }
+
+  function roundRect(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();}
+  function drawCanvasCat(ctx,cat,cx,cy,s){
+    ctx.save(); ctx.translate(cx,cy); ctx.scale(s,s); ctx.lineWidth=6; ctx.strokeStyle="#403840"; ctx.lineJoin="round";
+    ctx.fillStyle=cat.color;
+    ctx.beginPath();ctx.moveTo(-70,-55);ctx.lineTo(-92,-116);ctx.lineTo(-38,-83);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(70,-55);ctx.lineTo(92,-116);ctx.lineTo(38,-83);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.ellipse(0,-25,85,75,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.ellipse(0,65,70,54,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle=cat.accent;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(0,72,43,31,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    ctx.fillStyle="#2f2932";ctx.beginPath();ctx.ellipse(-34,-34,10,14,0,0,Math.PI*2);ctx.ellipse(34,-34,10,14,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-37,-39,3,0,Math.PI*2);ctx.arc(31,-39,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#ff9ab2";ctx.beginPath();ctx.moveTo(-7,-12);ctx.quadraticCurveTo(0,-4,7,-12);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  function wrapText(ctx,text,maxWidth){const chars=[...text];let lines=[],line="";for(const ch of chars){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch}else line=test}if(line)lines.push(line);return lines}
+  function saveResultCard(){
+    const r=state.result; if(!r)return; const c=r.cat;
+    const canvas=document.createElement("canvas"); canvas.width=1080; canvas.height=1350; const ctx=canvas.getContext("2d");
+    ctx.fillStyle="#ffffff";ctx.fillRect(0,0,1080,1350);
+    ctx.fillStyle="#ffd6e0";ctx.beginPath();ctx.arc(955,115,165,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#d8f5ea";ctx.beginPath();ctx.arc(100,1190,155,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#fffdf7";roundRect(ctx,70,70,940,1210,55);ctx.fill();
+    ctx.textAlign="center";ctx.fillStyle="#c33b63";ctx.font="800 30px sans-serif";ctx.fillText("🐾 내 안에 사는 고양이",540,145);
+    ctx.fillStyle="#2d2a33";ctx.font="900 34px sans-serif";ctx.fillText(`${r.nickname}님의 마음속 고양이는`,540,205);
+    drawCanvasCat(ctx,c,540,430,1.55);
+    ctx.fillStyle="#2d2a33";ctx.font="900 66px sans-serif";ctx.fillText(c.name,540,665);
+    ctx.fillStyle="#725f79";ctx.font="800 30px sans-serif";ctx.fillText(`${c.breed} · ${r.mbti}`,540,715);
+    ctx.fillStyle="#fff3c8";roundRect(ctx,145,755,790,105,28);ctx.fill();ctx.fillStyle="#65501d";ctx.font="800 25px sans-serif";
+    wrapText(ctx,`“${c.quote}”`,740).slice(0,2).forEach((line,i)=>ctx.fillText(line,540,802+i*34));
+    const topTraits=Object.entries(r.traits).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    let y=925; ctx.textAlign="left";ctx.font="800 25px sans-serif";
+    topTraits.forEach(([k,v])=>{ctx.fillStyle="#2d2a33";ctx.fillText(`${traitLabels[k][1]} ${traitLabels[k][0]}`,165,y);ctx.textAlign="right";ctx.fillText(`${v}%`,915,y);ctx.textAlign="left";ctx.fillStyle="#eee8ef";roundRect(ctx,165,y+18,750,18,9);ctx.fill();ctx.fillStyle="#ff8fab";roundRect(ctx,165,y+18,750*v/100,18,9);ctx.fill();y+=82;});
+    ctx.textAlign="center";ctx.fillStyle="#958c99";ctx.font="700 22px sans-serif";ctx.fillText("#내안에사는고양이  #고양이성향테스트",540,1230);
+    const link=document.createElement("a");link.download=`${r.nickname}_${c.name}_${r.mbti}.png`;link.href=canvas.toDataURL("image/png");link.click(); toast("결과 카드를 저장했어요 🐾");
+  }
+
+  async function shareResult(){
+    const r=state.result;if(!r)return; const text=`${r.nickname}님의 마음속 고양이는 '${r.cat.name}' (${r.mbti})! 🐱\n나도 내 안에 사는 고양이를 찾아봤어요.`;
+    try{
+      if(navigator.share){await navigator.share({title:"내 안에 사는 고양이",text,url:location.href});}
+      else if(navigator.clipboard){await navigator.clipboard.writeText(text+"\n"+location.href);toast("공유 문구와 링크를 복사했어요 🐾");}
+      else{prompt("아래 내용을 복사해 공유해 주세요.",text+"\n"+location.href);}
+    }catch(e){ if(e && e.name!=="AbortError") toast("공유를 완료하지 못했어요"); }
+  }
+
+  function resetTest(){state.index=0;state.answers=[];state.result=null;showScreen("startScreen");renderHistory();}
+
+  $("#startBtn").addEventListener("click",()=>{
+    const n=$("#nickname").value.trim(); if(!n){toast("닉네임을 입력해 주세요 😺");$("#nickname").focus();return}
+    state.nickname=n;state.index=0;state.answers=[];showScreen("testScreen");renderQuestion();
+  });
+  $("#nickname").addEventListener("keydown",e=>{if(e.key==="Enter")$("#startBtn").click()});
+  $("#backBtn").addEventListener("click",()=>{if(state.index>0){state.index--;renderQuestion()}});
+  $("#saveCardBtn").addEventListener("click",saveResultCard);
+  $("#shareBtn").addEventListener("click",shareResult);
+  $("#restartBtn").addEventListener("click",resetTest);
+
+
+  // 휠 스크롤 호환성 보강: 일부 파일 미리보기/임베디드 브라우저에서 기본 휠 스크롤이 막히는 경우 대응
+  let wheelFallbackLock = false;
+  window.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaY) < 1 || wheelFallbackLock) return;
+    const before = window.scrollY || document.documentElement.scrollTop || 0;
+    wheelFallbackLock = true;
+    requestAnimationFrame(() => {
+      const after = window.scrollY || document.documentElement.scrollTop || 0;
+      if (after === before) {
+        window.scrollBy({ top: e.deltaY, left: 0, behavior: "auto" });
+      }
+      wheelFallbackLock = false;
+    });
+  }, { passive: true });
+
+  renderStartCat();renderHistory();
+})();
+</script>
+</body>
+</html>
